@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "backend for auth, user and ad services",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LAMO-LATECH/lamo-app.git"
+  },
+  "author": "cid",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LAMO-LATECH/lamo-app/issues"
+  },
+  "homepage": "https://github.com/LAMO-LATECH/lamo-app#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
