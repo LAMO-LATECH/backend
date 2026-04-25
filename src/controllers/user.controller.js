@@ -2,7 +2,6 @@ import {
   getProfile,
   updateProfile,
   getPreferences,
-  updateProfile,
   updatePreferences,
 } from "../services/user.service.js";
 
