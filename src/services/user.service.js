@@ -24,7 +24,7 @@ const updateProfile = async (userId, updates) => {
   }
 
   const user = await User.findByIdAndUpdate(userId, allowed, {
-    new: true,
+    returnDocument: "after",
     runValidators: true,
   }).select("-password -refreshToken -refreshTokenExpiry");
 
@@ -38,7 +38,7 @@ const getPreferences = async (userId) => {
   const prefs = await UserPreferences.findOneAndUpdate(
     { userId },
     { $setOnInsert: { userId } },
-    { new: true, upsert: true, setDefaultsOnInsert: true },
+    { returnDocument: "after", upsert: true, setDefaultsOnInsert: true },
   );
   return prefs;
 };
@@ -61,7 +61,12 @@ const updatePreferences = async (userId, updates) => {
   const preferences = await UserPreferences.findOneAndUpdate(
     { userId },
     { $set: allowed, $setOnInsert: { userId } },
-    { new: true, upsert: true, setDefaultOnInsert: true, runValidators: true },
+    {
+      returnDocument: "after",
+      upsert: true,
+      setDefaultOnInsert: true,
+      runValidators: true,
+    },
   );
   return preferences;
 };
