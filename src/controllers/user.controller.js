@@ -1,4 +1,5 @@
 import { User } from "../models/user.model.js";
+import { register, login } from "../services/user.service.js";
 
 const registerUser = async (req, res) => {
   console.log("hit register", req.body);
@@ -10,22 +11,12 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: "All fields are important!" });
     }
 
-    // check if the user already exists
-    const existing = await User.findOne({ email: email.toLowerCase() });
-    if (existing) {
-      return res.status(400).json({ message: "Email is already in use!" });
-    }
-
-    // create user
-    const user = await User.create({
-      email: email.toLowerCase(),
-      password,
-      loggedIn: false,
-    });
+    // register/create user
+    const user = await register(email, password);
 
     res.status(201).json({
-      message: "user registerd",
-      user: { id: user._id, email: user.email, username: user.username },
+      message: "user registered",
+      user,
     });
   } catch (error) {
     res
@@ -39,29 +30,15 @@ const loginUser = async (req, res) => {
     // check if the user already exists
     const { email, password } = req.body;
 
-    const user = await User.findOne({
-      email: email.toLowerCase(),
-    }).select("+password");
+    if (!email || !password) {
+      return res.status(400).json({ message: "All fields are important!" });
+    }
 
-    if (!user)
-      return res.status(400).json({
-        message: "password or email may be incorrect",
-      });
-
-    // compare password
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch)
-      return res.status(400).json({
-        message: "password or email be incorrect",
-      });
+    const user = await login(email, password);
 
     res.status(200).json({
       message: "user logged in",
-      user: {
-        id: user._id,
-        email: user.email,
-        username: user.username,
-      },
+      user,
     });
   } catch (error) {
     res.status(500).json({
