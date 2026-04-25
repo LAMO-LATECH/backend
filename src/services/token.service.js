@@ -23,7 +23,7 @@ const generateRefreshToken = (user) => {
   });
 };
 
-const verifyAcessToken = (token) => {
+const verifyAccessToken = (token) => {
   return jwt.verify(token, ACCESS_SECRET);
 };
 
@@ -34,6 +34,6 @@ const verifyRefreshToken = (token) => {
 export {
   generateAccessToken,
   generateRefreshToken,
-  verifyAcessToken,
+  verifyAccessToken,
   verifyRefreshToken,
 };
