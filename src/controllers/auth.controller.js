@@ -55,7 +55,9 @@ const refreshUser = async (req, res) => {
     res.status(200).json(tokens);
   } catch (error) {
     const status = error.status || 500;
-    res.status(500).json({ message: error.message || "oopsies server error" });
+    res
+      .status(status)
+      .json({ message: error.message || "oopsies server error" });
   }
 };
 
