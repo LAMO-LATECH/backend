@@ -24,12 +24,12 @@ const login = async (email, password) => {
   }).select("+password");
 
   if (!user) {
-    throw { status: 400, message: "Email or password is incorrect" };
+    throw { status: 401, message: "Email or password is incorrect" };
   }
 
   const isMatch = await user.comparePassword(password);
   if (!isMatch) {
-    throw { status: 400, message: "Email or password is incorrect" };
+    throw { status: 401, message: "Email or password is incorrect" };
   }
 
   return {

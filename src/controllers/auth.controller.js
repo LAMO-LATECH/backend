@@ -1,5 +1,5 @@
 import { User } from "../models/user.model.js";
-import { register, login } from "../services/user.service.js";
+import { register, login } from "../services/auth.service.js";
 
 const registerUser = async (req, res) => {
   console.log("hit register", req.body);
