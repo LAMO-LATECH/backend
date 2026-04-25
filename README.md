@@ -18,7 +18,7 @@ REST API for the LAMO city navigation app — handles authentication, user manag
 
 ## Prerequisites
 
-- Node.js (LTS recommended)
+- Node.js
 - MongoDB running locally **or** a MongoDB Atlas connection string
 
 ---
