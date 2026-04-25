@@ -1,5 +1,5 @@
 import { User } from "../models/user.model.js";
-import { register, login } from "../services/auth.service.js";
+import { register, login, refresh, logout } from "../services/auth.service.js";
 
 const registerUser = async (req, res) => {
   console.log("hit register", req.body);
@@ -16,12 +16,12 @@ const registerUser = async (req, res) => {
 
     res.status(201).json({
       message: "user registered",
-      user,
+      ...user,
     });
   } catch (error) {
     res
       .status(500)
-      .json({ message: "oops sorry server error", error: error.message });
+      .json({ message: error.message || "oopsies sorry server error" });
   }
 };
 
@@ -38,13 +38,41 @@ const loginUser = async (req, res) => {
 
     res.status(200).json({
       message: "user logged in",
-      user,
+      ...user,
     });
   } catch (error) {
-    res.status(500).json({
-      message: "oops sorry server error",
-      error: error.message,
+    const status = error.status || 500;
+    res.status(status).json({
+      message: error.message || "oopsies server error",
     });
   }
 };
-export { registerUser, loginUser };
+
+const refreshUser = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    const tokens = await refresh(refreshToken);
+    res.status(200).json(tokens);
+  } catch (error) {
+    const status = error.status || 500;
+    res.status(500).json({ message: error.message || "oopsies server error" });
+  }
+};
+
+const logoutUser = async (req, res) => {
+  try {
+    const userId = req.user?.userId || req.body.userId;
+
+    if (!userId) {
+      return res.status(401).json({ message: "unauthorized" });
+    }
+    await logout(userId);
+    res.status(200).json({ message: "logged out" });
+  } catch (error) {
+    const status = error.status || 500;
+    res
+      .status(status)
+      .json({ message: error.message || "oopsies server error" });
+  }
+};
+export { registerUser, loginUser, refreshUser, logoutUser };
