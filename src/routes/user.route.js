@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { protect } from "../middleware/auth.middleware.js";
 import {
   getMe,
   updateMe,
@@ -8,8 +9,7 @@ import {
 
 const router = Router();
 
-// remove once we test the routes
-// router.use(protect);
+router.use(protect);
 
 router.route("/me").get(getMe).patch(updateMe);
 router
