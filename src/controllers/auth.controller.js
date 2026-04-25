@@ -63,11 +63,7 @@ const refreshUser = async (req, res) => {
 
 const logoutUser = async (req, res) => {
   try {
-    const userId = req.user?.userId || req.body.userId;
-
-    if (!userId) {
-      return res.status(401).json({ message: "unauthorized" });
-    }
+    const userId = req.user.userId;
     await logout(userId);
     res.status(200).json({ message: "logged out" });
   } catch (error) {
