@@ -65,3 +65,5 @@ const updatePreferences = async (userId, updates) => {
   );
   return preferences;
 };
+
+export { getProfile, updateProfile, getPreferences, updatePreferences };
