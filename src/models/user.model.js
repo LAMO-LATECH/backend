@@ -13,7 +13,7 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: true,
+      required: false,
       select: false,
       minLength: 8,
       maxLength: 50,
@@ -21,7 +21,7 @@ const userSchema = new Schema(
     email: {
       type: String,
       required: true,
-      unqiue: true,
+      unique: true,
       lowercase: true,
       trim: true,
     },
