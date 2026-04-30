@@ -71,4 +71,13 @@ const updatePreferences = async (userId, updates) => {
   return preferences;
 };
 
-export { getProfile, updateProfile, getPreferences, updatePreferences };
+const deleteAccount = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw { status: 404, message: "user not found" };
+  }
+  await User.findByIdAndDelete(userId);
+  await UserPreferences.deleteOne({ userId });
+};
+
+export { getProfile, updateProfile, getPreferences, updatePreferences, deleteAccount };
