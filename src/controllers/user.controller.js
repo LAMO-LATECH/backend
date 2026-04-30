@@ -3,6 +3,7 @@ import {
   updateProfile,
   getPreferences,
   updatePreferences,
+  deleteAccount,
 } from "../services/user.service.js";
 
 const getMe = async (req, res) => {
@@ -53,4 +54,14 @@ const updateMyPreferences = async (req, res) => {
   }
 };
 
-export { getMe, updateMe, getMyPreferences, updateMyPreferences };
+const deleteMe = async (req, res) => {
+  try {
+    await deleteAccount(req.user.userId);
+    res.status(204).send();
+  } catch (error) {
+    const status = error.status || 500;
+    res.status(status).json({ message: error.message || "oopsies server error" });
+  }
+};
+
+export { getMe, updateMe, getMyPreferences, updateMyPreferences, deleteMe };

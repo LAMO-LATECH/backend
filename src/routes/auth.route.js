@@ -6,10 +6,13 @@ import {
   logoutUser,
 } from "../controllers/auth.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
+import { registerLimiter, loginLimiter } from "../middleware/rateLimiters.js";
+
 const router = Router();
 
-router.route("/register").post(registerUser);
-router.route("/login").post(loginUser);
+router.route("/register").post(registerLimiter, registerUser);
+router.route("/login").post(loginLimiter, loginUser);
 router.route("/refresh").post(refreshUser);
 router.route("/logout").post(protect, logoutUser);
+
 export default router;
