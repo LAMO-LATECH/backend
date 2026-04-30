@@ -6,7 +6,10 @@ import {
   logoutUser,
 } from "../controllers/auth.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
-import { registerLimiter, loginLimiter } from "../middleware/rateLimiters.js";
+import {
+  registerLimiter,
+  loginLimiter,
+} from "../middleware/rateLimiter.midleware.js";
 
 const router = Router();
 
