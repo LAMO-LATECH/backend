@@ -1,5 +1,11 @@
 import { User } from "../models/user.model.js";
-import { register, login, refresh, logout } from "../services/auth.service.js";
+import {
+  register,
+  login,
+  refresh,
+  logout,
+  googleAuth,
+} from "../services/auth.service.js";
 
 const registerUser = async (req, res) => {
   console.log("hit register", req.body);
@@ -66,6 +72,19 @@ const logoutUser = async (req, res) => {
     const userId = req.user.userId;
     await logout(userId);
     res.status(200).json({ message: "logged out" });
+  } catch (error) {
+    const status = error.status || 500;
+    res
+      .status(status)
+      .json({ message: error.message || "oopsies server error" });
+  }
+};
+
+export const googleAuthUser = async (req, res) => {
+  try {
+    const { idToken } = req.body;
+    const result = await googleAuth(idToken);
+    res.status(200).json({ message: "google auth success", ...result });
   } catch (error) {
     const status = error.status || 500;
     res

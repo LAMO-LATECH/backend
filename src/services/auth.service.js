@@ -6,6 +6,7 @@ import {
   verifyRefreshToken,
 } from "./token.service.js";
 import { access } from "fs";
+import { verifyGoogleIdToken } from "./google.service.js";
 
 const REFRESH_TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const hashToken = (token) => {
@@ -119,4 +120,56 @@ const logout = async (userId) => {
   user.refreshTokenExpiry = null;
   await user.save();
 };
-export { register, login, refresh, logout, hashToken, issueTokenForUsers };
+
+export const googleAuth = async (idToken) => {
+  if (!idToken) {
+    const err = new Error("idToken required");
+    err.status = 400;
+    throw err;
+  }
+
+  const { googleId, email, name, picture } = await verifyGoogleIdToken;
+
+  let user = await User.findOne({ googleId });
+
+  if (!user) {
+    user = await User.findOne({ email });
+
+    if (user) {
+      user.googleId = googleId;
+      user.authProvider = "google";
+      if (!user.picture && picture) user.picture = picture;
+    } else {
+      user = new User({
+        email,
+        googleId,
+        username: name?.toLowerCase().replace(/\s+/g, "") || "angeleno",
+        picture,
+        authProvider: "google",
+      });
+    }
+  }
+
+  user.lastActive = new Date(Date.now() + REFRESH_TOKEN_TTL_MS);
+
+  await user.save();
+
+  return {
+    accessToken,
+    refreshToken,
+    user: {
+      id: user._id,
+      email: user.email,
+      username: user.username,
+    },
+  };
+};
+export {
+  register,
+  login,
+  refresh,
+  logout,
+  hashToken,
+  issueTokenForUsers,
+  googleAuth,
+};
