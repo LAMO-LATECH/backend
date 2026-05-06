@@ -121,14 +121,14 @@ const logout = async (userId) => {
   await user.save();
 };
 
-export const googleAuth = async (idToken) => {
+const googleAuth = async (idToken) => {
   if (!idToken) {
     const err = new Error("idToken required");
     err.status = 400;
     throw err;
   }
 
-  const { googleId, email, name, picture } = await verifyGoogleIdToken;
+  const { googleId, email, name, picture } = await verifyGoogleIdToken(idToken);
 
   let user = await User.findOne({ googleId });
 
@@ -150,9 +150,10 @@ export const googleAuth = async (idToken) => {
     }
   }
 
-  user.lastActive = new Date(Date.now() + REFRESH_TOKEN_TTL_MS);
+  user.lastActive = new Date();
 
   await user.save();
+  const { accessToken, refreshToken } = await issueTokenForUsers(user);
 
   return {
     accessToken,
@@ -161,6 +162,7 @@ export const googleAuth = async (idToken) => {
       id: user._id,
       email: user.email,
       username: user.username,
+      picture: user.picture,
     },
   };
 };
