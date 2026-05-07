@@ -70,6 +70,17 @@ const userSchema = new Schema(
       type: Date,
       default: Date.now,
     },
+    savedDestinations: [
+      {
+        type: {
+          type: String,
+          enum: ["home", "work", "custom"],
+          required: true,
+        },
+        label: { type: String },
+        address: { type: String, required: true },
+      },
+    ],
   },
   {
     timestamps: { createdAt: "createdOn", updatedAt: "updatedAt" },
