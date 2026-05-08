@@ -39,12 +39,14 @@ The server starts at `http://localhost:4000`.
 
 ## Environment Variables
 
-| Variable             | Description                                                            |
-| -------------------- | ---------------------------------------------------------------------- |
-| `MONGODB_URI`        | MongoDB connection string (e.g. `mongodb://localhost:27017/lamo`)      |
-| `PORT`               | Port the server listens on (default: `4000`)                           |
-| `JWT_ACCESS_SECRET`  | Secret for signing access tokens — use a long random string            |
-| `JWT_REFRESH_SECRET` | Secret for signing refresh tokens — use a different long random string |
+| Variable               | Description                                                            |
+| ---------------------- | ---------------------------------------------------------------------- |
+| `MONGODB_URI`          | MongoDB connection string (e.g. `mongodb://localhost:27017/lamo`)      |
+| `PORT`                 | Port the server listens on (default: `4000`)                           |
+| `JWT_ACCESS_SECRET`    | Secret for signing access tokens — use a long random string            |
+| `JWT_REFRESH_SECRET`   | Secret for signing refresh tokens — use a different long random string |
+| `GOOGLE_WEB_CLIENT_ID` | Google OAuth client ID for web                                         |
+| `GOOGLE_IOS_CLIENT_ID` | Google OAuth client ID for iOS                                         |
 
 Generate strong secrets:
 
