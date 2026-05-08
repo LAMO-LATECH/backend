@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import bcyrpt from "bcrypt";
+import bcrypt from "bcrypt";
 
 const userSchema = new Schema(
   {
@@ -13,7 +13,12 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: false,
+      required: [
+        function () {
+          return this.authProvider === "local";
+        },
+        "Password is required for local accounts",
+      ],
       select: false,
       minLength: 8,
       maxLength: 100,
@@ -65,20 +70,34 @@ const userSchema = new Schema(
       type: Date,
       default: Date.now,
     },
+    savedDestinations: [
+      {
+        type: {
+          type: String,
+          enum: ["home", "work", "custom"],
+          required: true,
+        },
+        label: { type: String },
+        address: { type: String, required: true },
+      },
+    ],
   },
   {
     timestamps: { createdAt: "createdOn", updatedAt: "updatedAt" },
   },
 );
 
-// before saving any password we need to hash it
+// hash password before saving
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
-  this.password = await bcyrpt.hash(this.password, 10);
+  if (!this.password) return;
+  this.password = await bcrypt.hash(this.password, 10);
 });
 
 // compare passwords
-userSchema.methods.comparePassword = async function (password) {
-  return await bcyrpt.compare(password, this.password);
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  if (!this.password) return false;
+  return await bcrypt.compare(candidatePassword, this.password);
 };
+
 export const User = mongoose.model("User", userSchema);

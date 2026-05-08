@@ -80,4 +80,90 @@ const deleteAccount = async (userId) => {
   await UserPreferences.deleteOne({ userId });
 };
 
-export { getProfile, updateProfile, getPreferences, updatePreferences, deleteAccount };
+const getDestinations = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw { status: 404, message: "user not found" };
+  }
+  return user.savedDestinations;
+};
+
+const upsertTypedDestination = async (userId, type, address) => {
+  const result = await User.findOneAndUpdate(
+    { _id: userId, "savedDestinations.type": type },
+    { $set: { "savedDestinations.$.address": address } },
+    { returnDocument: "after" },
+  );
+
+  if (result) {
+    return result.savedDestinations;
+  }
+
+  const updated = await User.findByIdAndUpdate(
+    userId,
+    { $push: { savedDestinations: { type, address } } },
+    { returnDocument: "after" },
+  );
+
+  if (!updated) {
+    throw { status: 404, message: "user not found" };
+  }
+  return updated.savedDestinations;
+};
+
+const addCustomDestination = async (userId, label, address) => {
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { $push: { savedDestinations: { type: "custom", label, address } } },
+    { returnDocument: "after" },
+  );
+  if (!user) {
+    throw { status: 404, message: "user not found" };
+  }
+  return user.savedDestinations;
+};
+
+const updateCustomDestination = async (userId, destId, updates) => {
+  const setFields = {};
+  if (updates.label !== undefined) {
+    setFields["savedDestinations.$.label"] = updates.label;
+  }
+  if (updates.address !== undefined) {
+    setFields["savedDestinations.$.address"] = updates.address;
+  }
+
+  const user = await User.findOneAndUpdate(
+    { _id: userId, "savedDestinations._id": destId },
+    { $set: setFields },
+    { returnDocument: "after" },
+  );
+  if (!user) {
+    throw { status: 404, message: "destination not found" };
+  }
+  return user.savedDestinations;
+};
+
+const deleteDestination = async (userId, destId) => {
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { $pull: { savedDestinations: { _id: destId } } },
+    { returnDocument: "after" },
+  );
+  if (!user) {
+    throw { status: 404, message: "user not found" };
+  }
+  return user.savedDestinations;
+};
+
+export {
+  getProfile,
+  updateProfile,
+  getPreferences,
+  updatePreferences,
+  deleteAccount,
+  getDestinations,
+  upsertTypedDestination,
+  addCustomDestination,
+  updateCustomDestination,
+  deleteDestination,
+};

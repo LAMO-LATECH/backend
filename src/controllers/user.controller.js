@@ -4,6 +4,11 @@ import {
   getPreferences,
   updatePreferences,
   deleteAccount,
+  getDestinations,
+  upsertTypedDestination,
+  addCustomDestination,
+  updateCustomDestination,
+  deleteDestination,
 } from "../services/user.service.js";
 
 const getMe = async (req, res) => {
@@ -60,8 +65,109 @@ const deleteMe = async (req, res) => {
     res.status(204).send();
   } catch (error) {
     const status = error.status || 500;
-    res.status(status).json({ message: error.message || "oopsies server error" });
+    res
+      .status(status)
+      .json({ message: error.message || "oopsies server error" });
   }
 };
 
-export { getMe, updateMe, getMyPreferences, updateMyPreferences, deleteMe };
+const getMyDestinations = async (req, res) => {
+  try {
+    const destinations = await getDestinations(req.user.userId);
+    res.status(200).json({ destinations });
+  } catch (error) {
+    const status = error.status || 500;
+    res
+      .status(status)
+      .json({ message: error.message || "oopsies server error" });
+  }
+};
+
+const upsertMyTypedDestination = async (req, res) => {
+  try {
+    const { type } = req.params;
+    if (type !== "home" && type !== "work") {
+      return res.status(400).json({ message: "type must be home or work" });
+    }
+    const { address } = req.body;
+    if (!address) {
+      return res.status(400).json({ message: "address is required" });
+    }
+    const destinations = await upsertTypedDestination(
+      req.user.userId,
+      type,
+      address,
+    );
+    res.status(200).json({ destinations });
+  } catch (error) {
+    const status = error.status || 500;
+    res
+      .status(status)
+      .json({ message: error.message || "oopsies server error" });
+  }
+};
+
+const addMyCustomDestination = async (req, res) => {
+  try {
+    const { label, address } = req.body;
+    if (!address) {
+      return res.status(400).json({ message: "address is required" });
+    }
+    const destinations = await addCustomDestination(
+      req.user.userId,
+      label,
+      address,
+    );
+    res.status(201).json({ destinations });
+  } catch (error) {
+    const status = error.status || 500;
+    res
+      .status(status)
+      .json({ message: error.message || "oopsies server error" });
+  }
+};
+
+const updateMyDestination = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const destinations = await updateCustomDestination(
+      req.user.userId,
+      id,
+      req.body,
+    );
+    res.status(200).json({ destinations });
+  } catch (error) {
+    const status = error.status || 500;
+    res
+      .status(status)
+      .json({ message: error.message || "oopsies server error" });
+  }
+};
+
+const deleteMyDestination = async (req, res) => {
+  try {
+    const destinations = await deleteDestination(
+      req.user.userId,
+      req.params.id,
+    );
+    res.status(200).json({ destinations });
+  } catch (error) {
+    const status = error.status || 500;
+    res
+      .status(status)
+      .json({ message: error.message || "oopsies server error" });
+  }
+};
+
+export {
+  getMe,
+  updateMe,
+  getMyPreferences,
+  updateMyPreferences,
+  deleteMe,
+  getMyDestinations,
+  upsertMyTypedDestination,
+  addMyCustomDestination,
+  updateMyDestination,
+  deleteMyDestination,
+};
