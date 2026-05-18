@@ -56,8 +56,8 @@ const userSchema = new Schema(
     },
     badge: {
       type: String,
-      enum: ["none", "bronze", "silver", "gold"],
-      default: "none",
+      enum: ["bronze", "silver", "gold"],
+      default: "bronze",
     },
     streak: {
       type: Number,
