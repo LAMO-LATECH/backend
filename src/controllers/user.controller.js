@@ -9,6 +9,8 @@ import {
   addCustomDestination,
   updateCustomDestination,
   deleteDestination,
+  getGamification,
+  updateGamification,
 } from "../services/user.service.js";
 
 const getMe = async (req, res) => {
@@ -159,6 +161,30 @@ const deleteMyDestination = async (req, res) => {
   }
 };
 
+const getMyGamification = async (req, res) => {
+  try {
+    const gamification = await getGamification(req.user.userId);
+    res.status(200).json({ gamification });
+  } catch (error) {
+    const status = error.status || 500;
+    res
+      .status(status)
+      .json({ message: error.message || "oopsies server error" });
+  }
+};
+
+const updateMyGamification = async (req, res) => {
+  try {
+    const gamification = await updateGamification(req.user.userId, req.body);
+    res.status(200).json({ gamification });
+  } catch (error) {
+    const status = error.status || 500;
+    res
+      .status(status)
+      .json({ message: error.message || "oopsies server error" });
+  }
+};
+
 export {
   getMe,
   updateMe,
@@ -170,4 +196,6 @@ export {
   addMyCustomDestination,
   updateMyDestination,
   deleteMyDestination,
+  getMyGamification,
+  updateMyGamification,
 };

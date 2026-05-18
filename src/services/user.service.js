@@ -71,6 +71,45 @@ const updatePreferences = async (userId, updates) => {
   return preferences;
 };
 
+const getGamification = async (userId) => {
+  const user = await User.findById(userId).select(
+    "points routesAccepted badge streak",
+  );
+  if (!user) {
+    throw { status: 404, message: "user not found" };
+  }
+  return {
+    points: user.points,
+    routesAccepted: user.routesAccepted,
+    badge: user.badge,
+    streak: user.streak,
+  };
+};
+
+const updateGamification = async (userId, updates) => {
+  const allowed = {};
+  if (updates.points !== undefined) allowed.points = updates.points;
+  if (updates.routesAccepted !== undefined)
+    allowed.routesAccepted = updates.routesAccepted;
+  if (updates.badge !== undefined) allowed.badge = updates.badge;
+  if (updates.streak !== undefined) allowed.streak = updates.streak;
+
+  const user = await User.findByIdAndUpdate(userId, allowed, {
+    returnDocument: "after",
+    runValidators: true,
+  }).select("points routesAccepted badge streak");
+
+  if (!user) {
+    throw { status: 404, message: "user not found" };
+  }
+  return {
+    points: user.points,
+    routesAccepted: user.routesAccepted,
+    badge: user.badge,
+    streak: user.streak,
+  };
+};
+
 const deleteAccount = async (userId) => {
   const user = await User.findById(userId);
   if (!user) {
@@ -166,4 +205,6 @@ export {
   addCustomDestination,
   updateCustomDestination,
   deleteDestination,
+  getGamification,
+  updateGamification,
 };

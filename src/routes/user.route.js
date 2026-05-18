@@ -11,6 +11,8 @@ import {
   addMyCustomDestination,
   updateMyDestination,
   deleteMyDestination,
+  getMyGamification,
+  updateMyGamification,
 } from "../controllers/user.controller.js";
 
 const router = Router();
@@ -22,6 +24,11 @@ router
   .route("/me/preferences")
   .get(getMyPreferences)
   .patch(updateMyPreferences);
+
+router
+  .route("/me/gamification")
+  .get(getMyGamification)
+  .patch(updateMyGamification);
 
 router
   .route("/me/destinations")

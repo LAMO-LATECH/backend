@@ -52,6 +52,17 @@ const userSchema = new Schema(
     routesAccepted: {
       type: Number,
       default: 0,
+      min: 0,
+    },
+    badge: {
+      type: String,
+      enum: ["none", "bronze", "silver", "gold"],
+      default: "none",
+    },
+    streak: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
     role: {
       type: String,
